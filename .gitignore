@@ -1,0 +1,75 @@
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# SQLite Databases & Local Test DBs
+*.db
+*.sqlite
+*.sqlite3
+research_community.db
+
+# User Uploaded Files (preserve directory with .gitkeep)
+static/uploads/avatars/*
+!static/uploads/avatars/.gitkeep
+
+# Node & Package Managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vercel Deployment Output
+.vercel/
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating System Artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing & Coverage
+.coverage
+htmlcov/
+.pytest_cache/

@@ -1,0 +1,16 @@
+{
+  "name": "new-folder-(2)",
+  "version": "1.0.0",
+  "description": "A full-stack research and publication community platform built with **FastAPI**, **HTML5/CSS3/Vanilla JS**, and **Supabase (PostgreSQL)**, meticulously styled after the academic researcher theme of [arnab9961.github.io](https://arnab9961.github.io/) (Jon Barron academic portfolio format).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/server": "^1.9.1"
+  }
+}

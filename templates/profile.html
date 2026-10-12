@@ -1,0 +1,363 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>{{ profile.full_name }} | ScholarNet Researcher Profile</title>
+  <meta name="author" content="{{ profile.full_name }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="/static/css/stylesheet.css">
+  <link rel="icon" type="image/png" href="/static/images/favicon.png">
+</head>
+
+<body>
+  <!-- Academic Sticky Top Navigation -->
+  <nav class="academic-navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-brand">
+        <span class="navbar-logo-circle">S</span>
+        <span>ScholarNet</span>
+      </a>
+
+      <div class="navbar-links">
+        <a href="/">Feed</a>
+        <a href="/#explore">Explore</a>
+        <a href="/#researchers">Community</a>
+        <div id="auth-nav-container" style="display:flex; align-items:center; gap:12px;">
+          <!-- Managed by app.js -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- Academic Researcher Intro Table (Directly styled after arnab9961.github.io) -->
+    <table class="intro-table" style="width:100%; border:0; margin-bottom: 24px;">
+      <tbody>
+        <tr class="intro-row">
+          <td class="intro-text-col" style="padding: 10px 20px 10px 0; vertical-align: middle;">
+            <p style="margin-bottom: 8px;">
+              <name>{{ profile.full_name }}</name>
+              <span style="font-size: 14.5px; color: #555;">{{ profile.email }} &middot; {{ profile.university }}</span>
+            </p>
+
+            <p class="intro-bio">
+              {% if profile.bio %}
+                {{ profile.bio }}
+              {% else %}
+                <em>No biographical description provided yet. Click "Edit Academic Profile" to add research background.</em>
+              {% endif %}
+            </p>
+
+            <p class="intro-links" style="margin-top: 12px;">
+              {% if profile.cv_link %}
+                <a href="{{ profile.cv_link }}" target="_blank">CV / Resume</a> &nbsp;/&nbsp;
+              {% endif %}
+              {% if profile.github_link %}
+                <a href="{{ profile.github_link }}" target="_blank">GitHub</a> &nbsp;/&nbsp;
+              {% endif %}
+              {% if profile.linkedin_link %}
+                <a href="{{ profile.linkedin_link }}" target="_blank">LinkedIn</a> &nbsp;/&nbsp;
+              {% endif %}
+              {% if profile.scholar_link %}
+                <a href="{{ profile.scholar_link }}" target="_blank">Google Scholar</a> &nbsp;/&nbsp;
+              {% endif %}
+              {% if profile.researchgate_link %}
+                <a href="{{ profile.researchgate_link }}" target="_blank">ResearchGate</a> &nbsp;/&nbsp;
+              {% endif %}
+              <a href="mailto:{{ profile.email }}">Contact Email</a>
+            </p>
+
+            <!-- Edit Button if Owner -->
+            <div id="profile-edit-btn-container" style="margin-top: 16px;">
+              <!-- Dynamically shown if viewing user's own profile -->
+            </div>
+          </td>
+
+          <!-- Profile Picture (Circular with Zoom on Hover) -->
+          <td class="intro-avatar-col" style="vertical-align: middle; text-align: center;">
+            <a href="{{ profile.avatar_url or '/static/images/default-avatar.png' }}" target="_blank" class="hoverZoomLink">
+              <img 
+                id="display-profile-avatar"
+                src="{{ profile.avatar_url or '/static/images/default-avatar.png' }}" 
+                class="intro-avatar-img" 
+                alt="{{ profile.full_name }}"
+              >
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Education & Affiliation Section -->
+    <heading>Affiliation &amp; Research Interests</heading>
+    <table style="width:100%; border:0; margin-bottom: 20px;">
+      <tbody>
+        <tr>
+          <td style="padding-top:4px; vertical-align:top">
+            <strong>Institution:</strong> {{ profile.university }}
+            <br>
+            <strong>Research Focus:</strong> 
+            {% if profile.research_interests %}
+              {{ profile.research_interests }}
+            {% else %}
+              <em>General Computer Science &amp; Artificial Intelligence</em>
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Research Publications Section -->
+    <heading>Research Publications &amp; Preprints</heading>
+    
+    {% if posts and posts|length > 0 %}
+      <div id="profile-posts-list">
+        {% for post in posts %}
+        <div class="post-card" id="post-{{ post.id }}">
+          <div class="post-row">
+            <div class="post-content-area" style="padding-left: 0;">
+              <div class="post-title-line">
+                <a href="{{ post.paper_link or '#' }}" target="_blank" class="post-title-link">
+                  <papertitle>{{ post.title }}</papertitle>
+                </a>
+              </div>
+
+              <div class="post-authors-line">
+                <strong>{{ post.author_name }}</strong>, <em>{{ post.author_university }}</em>
+              </div>
+
+              {% if post.venue %}
+              <div class="post-venue-line">
+                {{ post.venue }}{% if post.year %}, {{ post.year }}{% endif %}
+              </div>
+              {% endif %}
+
+              <div class="post-abstract">
+                {{ post.abstract }}
+              </div>
+
+              {% if post.tags %}
+              <div class="post-tags-line">
+                {% for tag in post.tags.split(',') %}
+                  <span class="label label-pps">{{ tag.strip() }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              <!-- Action links -->
+              <div class="post-action-links">
+                {% if post.paper_link %}
+                  <a href="{{ post.paper_link }}" target="_blank" class="action-pill">[Paper / PDF]</a>
+                {% endif %}
+                {% if post.code_link %}
+                  <a href="{{ post.code_link }}" target="_blank" class="action-pill">[Code / GitHub]</a>
+                {% endif %}
+                {% if post.project_link %}
+                  <a href="{{ post.project_link }}" target="_blank" class="action-pill">[Project Page]</a>
+                {% endif %}
+                {% if post.bibtex %}
+                  <button onclick="toggleBibtex('{{ post.id }}')" class="action-pill">[BibTeX]</button>
+                {% endif %}
+
+                <button onclick="handleLike('{{ post.id }}')" class="action-pill {% if post.is_liked_by_user %}active{% endif %}" id="like-btn-{{ post.id }}">
+                  <span id="like-heart-{{ post.id }}">{% if post.is_liked_by_user %}★{% else %}☆{% endif %}</span>
+                  <span id="like-count-{{ post.id }}">{{ post.likes_count }}</span> Upvotes
+                </button>
+
+                <button onclick="toggleComments('{{ post.id }}')" class="action-pill">
+                  💬 <span id="comments-count-{{ post.id }}">{{ post.comments|length }}</span> Comments
+                </button>
+
+                <button onclick="openShareModal('{{ post.id }}', '{{ post.title | replace("'", "\\'") }}', '{{ post.bibtex | replace("'", "\\'") if post.bibtex else "" }}')" class="action-pill">
+                  🔁 <span id="share-count-{{ post.id }}">{{ post.shares_count }}</span> Share
+                </button>
+              </div>
+
+              <!-- BibTeX Accordion -->
+              {% if post.bibtex %}
+              <div class="bibtex-box" id="bibtex-{{ post.id }}">
+                <button class="copy-bibtex-btn" onclick="copyBibtex('{{ post.id }}')">Copy</button>
+                <code id="bibtex-code-{{ post.id }}">{{ post.bibtex }}</code>
+              </div>
+              {% endif %}
+
+              <!-- Comments Drawer -->
+              <div class="comments-container" id="comments-{{ post.id }}">
+                <div class="comments-header">Peer Feedback &amp; Research Discussion</div>
+                <div class="comment-list" id="comment-list-{{ post.id }}">
+                  {% if post.comments and post.comments|length > 0 %}
+                    {% for c in post.comments %}
+                    <div class="comment-item">
+                      <img src="{{ c.author_avatar or '/static/images/default-avatar.png' }}" class="comment-avatar" alt="Author">
+                      <div class="comment-body">
+                        <div class="comment-meta">
+                          <a href="/profile/{{ c.user_id }}" class="comment-author">{{ c.author_name }}</a>
+                          <span> &middot; {{ c.author_university }}</span>
+                        </div>
+                        <div class="comment-text">{{ c.content }}</div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  {% else %}
+                    <div style="font-size: 13px; color: #777; font-style: italic;">No comments yet.</div>
+                  {% endif %}
+                </div>
+
+                <div class="comment-input-area">
+                  <input type="text" id="comment-input-{{ post.id }}" class="comment-input" placeholder="Write academic feedback or question..." onkeydown="if(event.key==='Enter') submitComment('{{ post.id }}')">
+                  <button onclick="submitComment('{{ post.id }}')" class="comment-submit-btn">Comment</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="padding: 30px; text-align: center; color: #666; background: #fafbfc; border: 1px dashed #cbd5e1; border-radius: 4px;">
+        <p>This researcher has not published any papers yet.</p>
+      </div>
+    {% endif %}
+
+    <!-- Academic Footer -->
+    <footer class="academic-footer">
+      <p>
+        ScholarNet &copy; 2026 &middot; Researcher Academic Portfolio &middot; <a href="/">Return to Main Feed</a>
+      </p>
+    </footer>
+  </main>
+
+  <!-- ==============================================================================
+       MODALS
+       ============================================================================== -->
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="edit-profile-modal">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <div class="modal-title">Edit Researcher Profile</div>
+        <button class="modal-close-btn" onclick="closeEditProfileModal()">&times;</button>
+      </div>
+
+      <!-- Avatar Upload Section -->
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom: 20px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <img id="edit-avatar-preview" src="{{ profile.avatar_url or '/static/images/default-avatar.png' }}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-maroon);" alt="Avatar Preview">
+        <div>
+          <label class="form-label">Upload Profile Picture</label>
+          <input type="file" id="avatar-file-input" accept="image/*" onchange="handleAvatarUpload(event)" style="font-size: 13px;">
+          <div style="font-size: 12px; color: #666; margin-top: 4px;">Supports JPG, PNG, WEBP (Max 5MB)</div>
+        </div>
+      </div>
+
+      <form id="edit-profile-form" onsubmit="handleProfileUpdate(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="full_name" class="form-input" required value="{{ profile.full_name }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">University / Affiliation *</label>
+            <input type="text" name="university" class="form-input" required value="{{ profile.university }}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Biographical Description (Research Bio)</label>
+          <textarea name="bio" class="form-textarea" rows="4" placeholder="Detail your research background, areas of expertise, and academic achievements...">{{ profile.bio }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Research Interests &amp; Fields (comma-separated)</label>
+          <input type="text" name="research_interests" class="form-input" value="{{ profile.research_interests }}" placeholder="e.g. LLMs, Spatiotemporal Prediction, Computer Vision, MLOps">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">CV / Resume PDF Link</label>
+            <input type="url" name="cv_link" class="form-input" value="{{ profile.cv_link }}" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">GitHub Profile</label>
+            <input type="url" name="github_link" class="form-input" value="{{ profile.github_link }}" placeholder="https://github.com/...">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Google Scholar</label>
+            <input type="url" name="scholar_link" class="form-input" value="{{ profile.scholar_link }}" placeholder="https://scholar.google.com/...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn</label>
+            <input type="url" name="linkedin_link" class="form-input" value="{{ profile.linkedin_link }}" placeholder="https://linkedin.com/in/...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ResearchGate</label>
+          <input type="url" name="researchgate_link" class="form-input" value="{{ profile.researchgate_link }}" placeholder="https://www.researchgate.net/profile/...">
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 10px;">Save Profile Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SHARE MODAL -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Share Research Publication</div>
+        <button class="modal-close-btn" onclick="closeShareModal()">&times;</button>
+      </div>
+
+      <p style="font-size: 14px; margin-bottom: 12px;">
+        Share <strong id="share-post-title">Publication</strong>:
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Direct Link</label>
+        <div class="share-link-input-group">
+          <input type="text" id="share-link-input" class="form-input" readonly>
+          <button onclick="copyShareLink()" class="comment-submit-btn">Copy</button>
+        </div>
+      </div>
+
+      <div class="share-btn-row">
+        <button onclick="shareOnTwitter()" class="share-social-btn">Share on X / Twitter</button>
+        <button onclick="shareOnLinkedIn()" class="share-social-btn">Share on LinkedIn</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">BibTeX Citation</label>
+        <textarea id="share-bibtex-area" class="form-textarea" style="font-family: monospace; font-size: 12px;" readonly></textarea>
+        <button onclick="copyShareBibtex()" class="action-pill" style="margin-top: 6px;">[Copy BibTeX]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+  <script>
+    const profileUserId = "{{ profile.id }}";
+
+    async function verifyProfileOwner() {
+      await checkAuthStatus();
+      if (currentUser && currentUser.id === profileUserId) {
+        const btnContainer = document.getElementById('profile-edit-btn-container');
+        if (btnContainer) {
+          btnContainer.innerHTML = `
+            <button onclick="openEditProfileModal()" class="nav-btn" style="padding: 6px 14px; font-size: 13.5px;">
+              ✏️ Edit Academic Profile &amp; Photo
+            </button>
+          `;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', verifyProfileOwner);
+  </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>ScholarNet | Research & Publication Community</title>
+  <meta name="author" content="ScholarNet Community">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An academic research and publication community for sharing papers, preprints, code, and scholarly discussions.">
+  <link rel="stylesheet" type="text/css" href="/static/css/stylesheet.css">
+  <link rel="icon" type="image/png" href="/static/images/favicon.png">
+</head>
+
+<body>
+  <!-- Academic Sticky Top Navigation -->
+  <nav class="academic-navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-brand">
+        <span class="navbar-logo-circle">S</span>
+        <span>ScholarNet</span>
+      </a>
+
+      <div class="navbar-links">
+        <a href="/" class="active">Feed</a>
+        <a href="#explore">Explore</a>
+        <a href="#researchers">Community</a>
+        <div id="auth-nav-container" style="display:flex; align-items:center; gap:12px;">
+          <!-- Injected dynamically by app.js -->
+          <button onclick="openAuthModal('login')" class="action-pill" style="font-weight:700;">Sign In</button>
+          <button onclick="openAuthModal('register')" class="nav-btn">Register</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- Academic Intro Banner (Styled after arnab9961.github.io intro table) -->
+    <section class="intro-card">
+      <table class="intro-table">
+        <tbody>
+          <tr>
+            <td class="intro-text-col">
+              <name>ScholarNet</name>
+              <name-secondary>Research &amp; Publication Community</name-secondary>
+              <br><br>
+              <p class="intro-bio">
+                Welcome to <strong>ScholarNet</strong>, an open scholarly community dedicated to peer-to-peer research dissemination, preprint sharing, and academic collaboration. Researchers, graduate students, and independent scholars can publish paper updates, link GitHub repositories and datasets, share BibTeX citations, and receive structured peer feedback.
+              </p>
+
+              <p class="intro-links">
+                <a href="javascript:void(0)" onclick="openNewPostModal()">Publish Paper</a> &nbsp;/&nbsp;
+                <a href="#explore" onclick="document.getElementById('feed-search-input').focus()">Search Archive</a> &nbsp;/&nbsp;
+                <a href="#researchers">Active Scholars</a> &nbsp;/&nbsp;
+                <a href="https://github.com/" target="_blank">Open Source</a>
+              </p>
+            </td>
+
+            <td class="intro-avatar-col">
+              <a href="javascript:void(0)" class="hoverZoomLink" title="ScholarNet Research Network">
+                <img src="/static/images/default-avatar.png" class="intro-avatar-img" alt="Academic Community">
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section Heading -->
+    <heading id="explore">Research Publications &amp; Preprints</heading>
+
+    <!-- Search & Filter Controls -->
+    <div class="filter-bar">
+      <div class="search-input-group">
+        <input 
+          type="text" 
+          id="feed-search-input" 
+          class="search-input" 
+          placeholder="Search by paper title, abstract keyword, author, or university..."
+        >
+      </div>
+
+      <div class="tag-pills">
+        <button class="tag-pill active" data-tag="all">All Fields</button>
+        <button class="tag-pill" data-tag="Spatiotemporal">Spatiotemporal</button>
+        <button class="tag-pill" data-tag="LLMs">LLMs</button>
+        <button class="tag-pill" data-tag="AI Agents">AI Agents</button>
+        <button class="tag-pill" data-tag="Deep Learning">Deep Learning</button>
+        <button class="tag-pill" data-tag="Computer Vision">Computer Vision</button>
+        <button class="tag-pill" data-tag="Graph Neural Networks">GNNs</button>
+      </div>
+    </div>
+
+    <!-- Central Research Posts Feed -->
+    <div id="posts-feed-container">
+      <!-- Loaded dynamically via app.js -->
+      <div style="padding: 30px; text-align: center; color: #777;">
+        Loading research publications...
+      </div>
+    </div>
+
+    <!-- Community Researchers Section -->
+    <heading id="researchers">Active Community Researchers</heading>
+    <div style="margin-top: 14px; margin-bottom: 30px;">
+      <table style="width:100%; border-collapse:collapse;">
+        <tbody>
+          {% for r in researchers %}
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="width: 50px; padding: 10px 8px; vertical-align: middle;">
+              <a href="/profile/{{ r.id }}" class="hoverZoomLink">
+                <img src="{{ r.avatar_url or '/static/images/default-avatar.png' }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;" alt="{{ r.full_name }}">
+              </a>
+            </td>
+            <td style="padding: 10px 8px; vertical-align: middle;">
+              <a href="/profile/{{ r.id }}" style="font-weight: 700; font-size: 15px;">{{ r.full_name }}</a>
+              <div style="font-size: 13px; color: #555;">{{ r.university }}</div>
+              {% if r.research_interests %}
+              <div style="font-size: 12px; color: #777;"><em>{{ r.research_interests }}</em></div>
+              {% endif %}
+            </td>
+            <td style="width: 110px; text-align: right; padding: 10px 8px; vertical-align: middle;">
+              <a href="/profile/{{ r.id }}" class="action-pill">[View Portfolio]</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Academic Footer -->
+    <footer class="academic-footer">
+      <p>
+        ScholarNet &copy; 2026 &middot; Built with FastAPI, Supabase &amp; HTML/CSS &middot; Theme inspired by <a href="https://arnab9961.github.io/" target="_blank">Arnab's Academic Portfolio</a>
+      </p>
+    </footer>
+  </main>
+
+  <!-- ==============================================================================
+       MODALS
+       ============================================================================== -->
+
+  <!-- 1. SHARE MODAL -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Share Research Publication</div>
+        <button class="modal-close-btn" onclick="closeShareModal()">&times;</button>
+      </div>
+
+      <p style="font-size: 14px; margin-bottom: 12px;">
+        Share <strong id="share-post-title">Publication</strong> with colleagues and academic peers:
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Direct Permanent Link</label>
+        <div class="share-link-input-group">
+          <input type="text" id="share-link-input" class="form-input" readonly>
+          <button onclick="copyShareLink()" class="comment-submit-btn">Copy</button>
+        </div>
+      </div>
+
+      <div class="share-btn-row">
+        <button onclick="shareOnTwitter()" class="share-social-btn">Share on X / Twitter</button>
+        <button onclick="shareOnLinkedIn()" class="share-social-btn">Share on LinkedIn</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">BibTeX Citation</label>
+        <textarea id="share-bibtex-area" class="form-textarea" style="font-family: monospace; font-size: 12px;" readonly></textarea>
+        <button onclick="copyShareBibtex()" class="action-pill" style="margin-top: 6px;">[Copy BibTeX Citation]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. NEW PUBLICATION POST MODAL -->
+  <div class="modal-overlay" id="new-post-modal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <div class="modal-title">Publish Research or Preprint</div>
+        <button class="modal-close-btn" onclick="closeNewPostModal()">&times;</button>
+      </div>
+
+      <form id="new-post-form" onsubmit="handleCreatePost(event)">
+        <div class="form-group">
+          <label class="form-label">Publication / Paper Title *</label>
+          <input type="text" name="title" class="form-input" required placeholder="e.g. Interpretable Spatiotemporal Prediction using Neural Graph Architectures">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Venue / Journal / Conference</label>
+            <input type="text" name="venue" class="form-input" placeholder="e.g. NeurIPS 2026, IEEE T-ITS, arXiv">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Publication Year</label>
+            <input type="number" name="year" class="form-input" value="2026">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Research Fields &amp; Tags (comma-separated)</label>
+          <input type="text" name="tags" class="form-input" placeholder="e.g. AI, Deep Learning, Spatiotemporal, Computer Vision">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Abstract / Research Summary *</label>
+          <textarea name="abstract" class="form-textarea" rows="4" required placeholder="Provide an academic summary or abstract of the findings, methodology, and results..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Paper / PDF Link</label>
+            <input type="url" name="paper_link" class="form-input" placeholder="https://arxiv.org/abs/...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Code / GitHub Repository</label>
+            <input type="url" name="code_link" class="form-input" placeholder="https://github.com/...">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Project / Demo Page</label>
+          <input type="url" name="project_link" class="form-input" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label">BibTeX Citation</label>
+            <button type="button" onclick="autoGenerateBibtex()" class="action-pill" style="font-size:12px;">[Auto-Format BibTeX]</button>
+          </div>
+          <textarea name="bibtex" class="form-textarea" rows="3" style="font-family: monospace; font-size: 12px;" placeholder="@article{...}"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Post to Community Feed</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. AUTHENTICATION MODAL (Sign In & Registration) -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <div style="display: flex; gap: 16px;">
+          <span id="auth-tab-login" onclick="switchAuthTab('login')" style="cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid var(--primary-maroon); font-weight: bold;">Sign In</span>
+          <span id="auth-tab-register" onclick="switchAuthTab('register')" style="cursor: pointer; padding-bottom: 4px;">Register</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeAuthModal()">&times;</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <div id="login-form-container">
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Primary Email Address</label>
+            <input type="email" name="email" class="form-input" required placeholder="scholar@university.edu">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-input" required placeholder="Enter password">
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 8px;">Sign In to ScholarNet</button>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-form-container" style="display: none;">
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="full_name" class="form-input" required placeholder="e.g. D.M. Rafiun Bin Masud">
+          </div>
+          <div class="form-group">
+            <label class="form-label">University / Institution Affiliation *</label>
+            <input type="text" name="university" class="form-input" required placeholder="e.g. East West University, Stanford, MIT">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Email Address *</label>
+            <input type="email" name="email" class="form-input" required placeholder="scholar@university.edu">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password * (min 6 characters)</label>
+            <input type="password" name="password" class="form-input" minlength="6" required placeholder="Choose a secure password">
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 8px;">Create Researcher Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+  <script>
+    // Initial post loading
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPosts();
+    });
+  </script>
+</body>
+</html>
